@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: "YOUR_API_KEY",
+      appId: "YOUR_APP_ID",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      projectId: "YOUR_PROJECT_ID",
+      databaseURL: "YOUR_DATABASE_URL",
+      measurementId: "YOUR_MEASUREMENT_ID",
+    ),
+  );
+  runApp(MyApp());
 }
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -25,6 +39,7 @@ class Whatsapp extends StatefulWidget {
 class _WhatsappState extends State<Whatsapp> {
   List<Map<String, String>> chatList = [];
   List<Map<String, String>> statusList = [];
+  List<Map<String, String>> callList = [];
 
   @override
   void initState() {
@@ -323,7 +338,18 @@ class _WhatsappState extends State<Whatsapp> {
     });
     // Add more initial chat data as needed
   }
-
+  void _populateCallList() {
+    // Add initial call data to the list
+    callList.add({
+      'title': 'AsimGraphics',
+      'subtitle': 'aqsa change the grouped setting',
+      'leading':
+          'https://tse4.mm.bing.net/th?id=OIP.8JdGmRilvtYeHtZE7E8F0gHaD1&pid=Api&P=0&h=220',
+      'Icon': 'Icons.call',
+      'iconColor': 'Colors.green',
+    });
+    // Add more initial call data as needed
+  }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -343,7 +369,7 @@ class _WhatsappState extends State<Whatsapp> {
                 onPressed: () {
                   Scaffold.of(context).openEndDrawer(); // Open the end drawer
                 },
-              ),
+              ), 
             ),
           ],
           bottom: const TabBar(
@@ -420,7 +446,8 @@ class _WhatsappState extends State<Whatsapp> {
           height: MediaQuery.of(context).size.height,
           child: TabBarView(
             children: [
-              SingleChildScrollView( // Make the SingleChildScrollView here
+              SingleChildScrollView(
+                // Make the SingleChildScrollView here
                 child: Column(
                   children: [
                     Padding(
@@ -430,55 +457,81 @@ class _WhatsappState extends State<Whatsapp> {
                           Icons.download,
                           color: Colors.green,
                         ),
-                        title: Text("Archived"), 
+                        title: Text("Archived"),
                       ),
                     ),
                     _buildChatsTab(),
                   ],
                 ),
               ),
-
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor:Colors.green,
-                          child: Icon(Icons.recycling_sharp),
-                        ),
-                          
-                        title: Text("My status"), 
-                        subtitle: Text("tap to add status update"), 
-
+                    padding: const EdgeInsets.only(left: 20),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.green,
+                        child: Icon(Icons.recycling_sharp),
                       ),
+                      title: Text("My status"),
+                      subtitle: Text("tap to add status update"),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
                         width: MediaQuery.of(context).size.width,
                         color: Color.fromARGB(255, 245, 245, 244),
                        
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("recent updates" ,style: TextStyle(color: Color.fromARGB(159, 41, 100, 43)),),
+                          child: Text(
+                            "recent updates",
+                            style: TextStyle(
+                                color: Color.fromARGB(159, 41, 100, 43)),
+                          ),
                         )),
-                    ),
-                    Expanded(child: _buildStatusTab())
-
-             
-
-                   
-              ],
-            ),
-              Center(
-                child: Text(
-                  'Contact Tab Content',
-                  style: TextStyle(fontSize: 20),
-                ),
+                  ),
+                  Expanded(child: _buildStatusTab())
+                ],
               ),
+
+                            Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.green,
+                        child: Icon(Icons.recycling_sharp),
+                      ),
+                      title: Text("My calls"),
+                      subtitle: Text("tap to add caas update"),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        color: Color.fromARGB(255, 245, 245, 244),
+                       
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "recent updates",
+                            style: TextStyle(
+                                color: Color.fromARGB(159, 41, 100, 43)),
+                          ),
+                        )),
+                  ),
+                  Expanded(child: _buildCallTab())
+                ],
+              ),
+
             ],
           ),
         ),
@@ -532,6 +585,39 @@ class _WhatsappState extends State<Whatsapp> {
       );
     }
   }
+
+    Widget _buildCallTab() {
+    if (chatList.isEmpty) {
+      return Center(
+        child: Text(
+          'No call available',
+          style: TextStyle(fontSize: 20),
+        ),
+      );
+    } else {
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: chatList.length,
+        itemBuilder: (context, index) {
+          return mycall(
+            ttitle: callList[index]['title']!,
+            ssubtitle: callList[index]['subtitle']!,
+            leading: callList[index]['leading']!,
+            // ttrailing: callList[index]['trailing']!,
+            // CColor: callList[index]['iconColor']!,
+            // CallIcon: callList[index]['Icon']!,
+             
+          );
+        },
+      );
+    }
+  }
+
+
+
+
+
 }
 
 Widget mychat({
@@ -575,3 +661,29 @@ Widget myStatus({
     ),
   );
 }
+
+
+Widget mycall({
+  required String leading,
+  required String ttitle,
+  required String ssubtitle,
+  
+  // required  CColor,
+  // required  CallIcon,
+}) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 10),
+    child: ListTile(
+      leading: CircleAvatar(
+        radius: 30.0,
+        backgroundImage: NetworkImage(leading),
+        backgroundColor: Colors.transparent,
+      ),
+      title: Text(ttitle),
+      subtitle: Text(ssubtitle),
+      // trailing: Icon(CallIcon,color: CColor,)  ,
+      ),
+    
+  );
+}
+

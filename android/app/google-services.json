@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "862208979918",
+    "project_id": "flutterauth-86716",
+    "storage_bucket": "flutterauth-86716.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862208979918:android:c282ec194a63106508719f",
+        "android_client_info": {
+          "package_name": "com.example.whatsappui"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYMTV1AdKEdT913Cgq1Q1Dr6qQHorR8Hc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
